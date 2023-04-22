@@ -11,6 +11,13 @@
   },
   "customizations": {
     "codespaces": {
+      "repositories": {
+        "genome21/Chore-Quest": {
+          "permissions": {
+            "issues": "write"
+          }
+        }
+      },
       "openFiles": [
         "src/App.js"
       ]
@@ -22,5 +29,5 @@
       "onAutoForward": "openPreview"
     }
   },
-  "forwardPorts": [3000]
+  "forwardPorts": [3000],
 }
