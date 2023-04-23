@@ -1,28 +1,31 @@
 import React from "react";
-import { ListGroup } from "react-bootstrap";
+import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Checkbox } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
-const ChoreList = ({ chores, category, completeChore }) => {
+const ChoreList = ({ chores, category, completeChore, selectedChore, setSelectedChore }) => {
   const filteredChores = chores.filter((chore) => chore.category === category);
 
-  const handleCheckboxChange = (chore) => {
-    completeChore(chore);
-  };
-
   return (
-    <ListGroup>
-      {filteredChores.map((chore) => (
-        <ListGroup.Item key={chore.chore}>
-          {chore.chore} - Value: {chore.value}{" "}
-          <span className="float-right">
-            <label className="mr-2">Done</label>
-            <input
-              type="checkbox"
-              onChange={() => handleCheckboxChange(chore)}
+    <List>
+      {filteredChores.map((chore, index) => (
+        <ListItem key={index}>
+          <ListItemText primary={chore.chore} secondary={`Value: ${chore.value}`} />
+          <ListItemSecondaryAction>
+            <IconButton edge="end" onClick={() => setSelectedChore(chore)}>
+              <CheckIcon />
+            </IconButton>
+            <Checkbox
+              edge="end"
+              checked={selectedChore === chore}
+              onChange={() => {
+                setSelectedChore(chore);
+                completeChore(chore);
+              }}
             />
-          </span>
-        </ListGroup.Item>
+          </ListItemSecondaryAction>
+        </ListItem>
       ))}
-    </ListGroup>
+    </List>
   );
 };
 

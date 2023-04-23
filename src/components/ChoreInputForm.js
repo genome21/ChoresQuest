@@ -1,55 +1,78 @@
 import React, { useState } from "react";
-import { Button, Form, Row, Col } from "react-bootstrap";
+import { TextField, Button, Grid, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
+
+const categories = [
+  "Fire",
+  "Poison",
+  "Psychic",
+  "Radiant",
+  "Thunder",
+  "Acid",
+  "Cold",
+  "Force",
+  "Slashing",
+  "Attack",
+  "Ranged",
+  "Spell",
+];
 
 const ChoreInputForm = ({ addChore }) => {
   const [chore, setChore] = useState("");
-  const [value, setValue] = useState(0);
-  const [category, setCategory] = useState(1);
+  const [value, setValue] = useState(1);
+  const [category, setCategory] = useState(categories[0]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addChore({ chore, value, category });
-    setChore("");
-    setValue(0);
-    setCategory(1);
+    if (chore.trim()) {
+      addChore({ chore, value, category });
+      setChore("");
+      setValue(1);
+      setCategory(categories[0]);
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Row>
-        <Col>
-          <Form.Control
-            type="text"
-            placeholder="Chore"
+    <form onSubmit={handleSubmit}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Chore"
             value={chore}
             onChange={(e) => setChore(e.target.value)}
+            fullWidth
           />
-        </Col>
-        <Col>
-          <Form.Control
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            label="Value"
             type="number"
-            placeholder="Value"
             value={value}
             onChange={(e) => setValue(parseInt(e.target.value))}
+            fullWidth
           />
-        </Col>
-        <Col>
-          <Form.Control
-            as="select"
-            value={category}
-            onChange={(e) => setCategory(parseInt(e.target.value))}
-          >
-            <option value={1}>1-5</option>
-            <option value={2}>6-10</option>
-            <option value={3}>11-15</option>
-            <option value={4}>16-20</option>
-          </Form.Control>
-        </Col>
-        <Col>
-          <Button type="submit">Add Chore</Button>
-        </Col>
-      </Row>
-    </Form>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" fullWidth>
+            Add Chore
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

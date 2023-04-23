@@ -1,17 +1,17 @@
 import React from "react";
-import { ListGroup } from "react-bootstrap";
+import { Typography } from "@mui/material";
 
 const ChoreLegend = ({ chores }) => {
+  const categories = [...new Set(chores.map((chore) => chore.category))];
+
   return (
     <div>
-      <h3>All Chores</h3>
-      <ListGroup>
-        {chores.map((chore) => (
-          <ListGroup.Item key={chore.chore}>
-            {chore.chore} - Category: {chore.category} - Value: {chore.value}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+      <Typography variant="h6">Chore Categories</Typography>
+      {categories.map((category) => (
+        <Typography key={category} variant="body1">
+          Category {category}: {chores.filter((chore) => chore.category === category).length} Chores
+        </Typography>
+      ))}
     </div>
   );
 };

@@ -1,62 +1,59 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import ChoreInputForm from "./components/ChoreInputForm";
-import ChoreList from "./components/ChoreList";
-import DieRoll from "./components/DieRoll";
-import MonsterHealth from "./components/MonsterHealth";
-import ChoreLegend from "./components/ChoreLegend";
-import ChoreExportImport from "./components/ChoreExportImport";
-import { Button } from "react-bootstrap";
+import { Container } from "@mui/material";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import ChoreInputForm from "./ChoreInputForm";
+import ChoreList from "./ChoreList";
+import DieRoller from "./DieRoller";
+import Monster from "./Monster";
+import "./App.css";
+import ChoreSetup from "./ChoreSetup";
 
-const App = () => {
+function App() {
   const [chores, setChores] = useState([]);
-  const [category, setCategory] = useState(null);
   const [monsterHealth, setMonsterHealth] = useState(100);
 
   const addChore = (chore) => {
     setChores([...chores, chore]);
   };
 
-  const completeChore = (chore) => {
-    setMonsterHealth(monsterHealth - chore.value);
-  };
-  
-
-  const clearChores = () => {
-    setChores([]);
+  const deleteChore = (choreToDelete) => {
+    setChores(chores.filter((chore) => chore !== choreToDelete));
   };
 
-  const resetMonsterHealth = () => {
-    setMonsterHealth(100);
+  const damageMonster = (damage) => {
+    setMonsterHealth((prevHealth) => Math.max(prevHealth - damage, 0));
   };
 
-  const importChores = (data) => {
-    setChores(data);
-  };
+  const gameWon = monsterHealth === 0;
 
   return (
-    <div className="container">
-      <h1>ChoreQuest</h1>
-      <ChoreInputForm addChore={addChore} />
-      <DieRoll setCategory={setCategory} />
-      {category && (
-        <div>
-          <h3>Category {category}</h3>
-          <ChoreList
-            chores={chores}
-            category={category}
-            completeChore={completeChore}
-          />
-        </div>
-      )}
-      <MonsterHealth health={monsterHealth} />
-      <ChoreLegend chores={chores} />
-<Button onClick={clearChores} className="mr-2">Clear Chores</Button>
-<Button onClick={resetMonsterHealth} className="mr-2">Reset Monster Health</Button>
-<ChoreExportImport chores={chores} importChores={importChores} />
-</div>
-);
-};
+    <Router>
+      <div className="App">
+        <Container maxWidth="md">
+          <Switch>
+            <Route path="/setup">
+              <ChoreSetup
+                addChore={addChore}
+                chores={chores}
+                deleteChore={deleteChore}
+              />
+            </Route>
+            <Route path="/">
+              <h1>Chore Quest</h1>
+              <Link to="/setup">Setup Chores</Link>
+              <DieRoller
+                categories={categories}
+                roll={roll}
+                chores={chores}
+                onChoreCompleted={damageMonster}
+              />
+              <Monster health={monsterHealth} gameWon={gameWon} />
+            </Route>
+          </Switch>
+        </Container>
+      </div>
+    </Router>
+  );
+}
 
 export default App;
-

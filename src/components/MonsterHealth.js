@@ -1,16 +1,13 @@
 import React from "react";
-import { ProgressBar } from "react-bootstrap";
+import { Typography, LinearProgress } from "@mui/material";
 
 const MonsterHealth = ({ health }) => {
+  const normalizedHealth = Math.max(0, Math.min(100, health));
+
   return (
     <div>
-      <h4>Monster Health</h4>
-      <ProgressBar
-        now={health}
-        max={100}
-        label={`${health}/100`}
-        variant={health > 50 ? "success" : health > 20 ? "warning" : "danger"}
-      />
+      <Typography variant="h6">Monster Health: {normalizedHealth}</Typography>
+      <LinearProgress variant="determinate" value={normalizedHealth} />
     </div>
   );
 };

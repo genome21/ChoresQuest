@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Box } from "@mui/material";
 
 const ChoreExportImport = ({ chores, importChores }) => {
-  const fileInputRef = useRef();
+  const fileInput = useRef(null);
 
   const exportChores = () => {
     const data = JSON.stringify(chores);
@@ -12,37 +12,40 @@ const ChoreExportImport = ({ chores, importChores }) => {
     link.href = url;
     link.download = "chores.json";
     link.click();
-    URL.revokeObjectURL(url);
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = JSON.parse(e.target.result);
-        importChores(data);
-      };
-      reader.readAsText(file);
-    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data =       JSON.parse(event.target.result);
+      importChores(data);
+    };
+    reader.readAsText(file);
+  };
+
+  const triggerFileUpload = () => {
+    fileInput.current.click();
   };
 
   return (
-    <div>
-      <Button onClick={exportChores} className="mr-2">
+    <Box>
+      <Button onClick={exportChores} variant="contained" sx={{ mr: 1 }}>
         Export Chores
       </Button>
-      <Button onClick={() => fileInputRef.current.click()}>
+      <Button onClick={triggerFileUpload} variant="contained">
         Import Chores
       </Button>
       <input
+        ref={fileInput}
         type="file"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileUpload}
+        accept=".json"
+        hidden
+        onChange={handleFileChange}
       />
-    </div>
+    </Box>
   );
 };
 
 export default ChoreExportImport;
+
