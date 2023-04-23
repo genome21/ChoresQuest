@@ -1,66 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+// import "antd/dist/antd.css";
 import "./App.css";
+import { Layout } from "antd";
+import GamePage from "./GamePage";
 import ChoreInputForm from "./components/ChoreInputForm";
 import ChoreList from "./components/ChoreList";
-import Monster from "./components/Monster";
-import { Button, Row, Col } from "antd";
-import { ReloadOutlined, SyncOutlined } from "@ant-design/icons";
+//import NavBar from "./components/NavBar";
 
-const App = () => {
+const { Header, Content } = Layout;
+
+function App() {
   const [chores, setChores] = useState([]);
   const [monsterHealth, setMonsterHealth] = useState(100);
-  const [shake, setShake] = useState(false);
 
-  const addChore = (name, value, category) => {
-    setChores([...chores, { name, value, category, done: false }]);
+  useEffect(() => {
+    const storedChores = localStorage.getItem("chores");
+    if (storedChores) {
+      setChores(JSON.parse(storedChores));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("chores", JSON.stringify(chores));
+  }, [chores]);
+
+  const handleAddChore = (chore) => {
+    setChores([...chores, chore]);
   };
 
-  const toggleChore = (index) => {
+  const handleRemoveChore = (index) => {
     const newChores = [...chores];
-    newChores[index].done = !newChores[index].done;
-
-    if (newChores[index].done) {
-      setMonsterHealth(monsterHealth - newChores[index].value);
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-    } else {
-      setMonsterHealth(monsterHealth + newChores[index].value);
-    }
-
+    newChores.splice(index, 1);
     setChores(newChores);
   };
 
-  const resetChores = () => {
-    setChores([]);
+  const handleMonsterDamage = (damage) => {
+    setMonsterHealth((prevHealth) => prevHealth - damage);
   };
 
-  const resetMonster = () => {
+  const handleResetGame = () => {
     setMonsterHealth(100);
   };
 
   return (
-    <div className="App">
-      <Row>
-        <Col span={12}>
-          <ChoreInputForm addChore={addChore} />
-          <ChoreList chores={chores} toggleChore={toggleChore} />
-          <Button type="primary" icon={<SyncOutlined />} onClick={resetChores}>
-            Reset Chores
-          </Button>
-          <Button
-            type="primary"
-            icon={<ReloadOutlined />}
-            onClick={resetMonster}
-          >
-            Reset Monster
-          </Button>
-        </Col>
-        <Col span={12}>
-          <Monster health={monsterHealth} shake={shake} />
-        </Col>
-      </Row>
-    </div>
+    <Router>
+      <Layout>
+        <Header>
+          {/* <NavBar /> */}
+        </Header>
+        <Content>
+          <Switch>
+            <Route exact path="/">
+              <GamePage
+                chores={chores}
+                monsterHealth={monsterHealth}
+                handleMonsterDamage={handleMonsterDamage}
+                handleResetGame={handleResetGame}
+              />
+            </Route>
+            <Route path="/chore-setup">
+              <ChoreInputForm handleAddChore={handleAddChore} />
+              <ChoreList chores={chores} handleRemoveChore={handleRemoveChore} />
+            </Route>
+          </Switch>
+        </Content>
+      </Layout>
+    </Router>
   );
-};
+}
 
 export default App;
