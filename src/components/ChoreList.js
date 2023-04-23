@@ -1,31 +1,21 @@
 import React from "react";
-import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Checkbox } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
+import { List, Checkbox } from "antd";
 
-const ChoreList = ({ chores, category, completeChore, selectedChore, setSelectedChore }) => {
-  const filteredChores = chores.filter((chore) => chore.category === category);
-
+const ChoreList = ({ chores, toggleChore }) => {
   return (
-    <List>
-      {filteredChores.map((chore, index) => (
-        <ListItem key={index}>
-          <ListItemText primary={chore.chore} secondary={`Value: ${chore.value}`} />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" onClick={() => setSelectedChore(chore)}>
-              <CheckIcon />
-            </IconButton>
-            <Checkbox
-              edge="end"
-              checked={selectedChore === chore}
-              onChange={() => {
-                setSelectedChore(chore);
-                completeChore(chore);
-              }}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
-    </List>
+    <List
+      itemLayout="horizontal"
+      dataSource={chores}
+      renderItem={(chore, index) => (
+        <List.Item>
+          <Checkbox
+            checked={chore.done}
+            onChange={() => toggleChore(index)}
+          />
+          {chore.name} ({chore.value}) - {chore.category}
+        </List.Item>
+      )}
+    />
   );
 };
 

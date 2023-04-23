@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react";
-import dragon from "../assets/dragon.png";
+import React from "react";
 import "./Monster.css";
-import "./shake.css";
+import { Progress, Image } from "antd";
+import dragon from "../assets/dragon.png";
 
-const Monster = ({ health, gameWon }) => {
-  const [shakeClass, setShakeClass] = useState("");
-
-  useEffect(() => {
-    if (health < 100 && !gameWon) {
-      setShakeClass("shake");
-      setTimeout(() => {
-        setShakeClass("");
-      }, 500);
-    }
-  }, [health, gameWon]);
+const Monster = ({ health, shake }) => {
+  const progressColor =
+    health > 75
+      ? "#52c41a"
+      : health > 50
+      ? "#faad14"
+      : health > 25
+      ? "#f5222d"
+      : "#9e1068";
 
   return (
-    <div className="monster-container">
-      <img
-        className={`monster-image ${shakeClass} ${gameWon ? "monster-defeated" : ""}`}
+    <div className="monster">
+      <Image
         src={dragon}
-        alt="Monster"
+        alt="Dragon"
+        preview={false}
+        className={`monster-image ${shake ? "shake" : ""}`}
       />
-      <div className={`monster-health ${gameWon ? "monster-defeated" : ""}`}>
-        <p>Monster Health: {health}</p>
+      <div className="monster-health">
+        <Progress
+          type="circle"
+          percent={health}
+          width={80}
+          strokeColor={progressColor}
+          format={(percent) => `${percent}`}
+        />
       </div>
-      {gameWon && (
-        <div className="win-message">
-          <h1>You Win!</h1>
-        </div>
-      )}
     </div>
   );
 };
